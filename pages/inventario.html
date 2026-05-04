@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../css/inventario.css">
     <link rel="stylesheet" href="../css/menu.css">
     <link rel="stylesheet" href="../css/ventas.css">
+    <style>
+        body { overflow: auto !important; padding-bottom: 80px; }
+        .inventario-content { max-height: calc(100vh - 140px); overflow-y: auto; padding: 20px; }
+        @media (max-width: 768px) {
+            .inventario-content { max-height: calc(100vh - 180px); padding: 10px; }
+        }
+    </style>
 </head>
 <body>
     <header class="top-bar">
@@ -31,14 +38,14 @@
 
     <main class="inventario-content">
         <div class="buscador">
-            <input type="text" id="buscarInventario" placeholder="🔍 Buscar..." autocomplete="off">
+            <input type="text" id="buscarInventario" placeholder="🔍 Buscar producto..." autocomplete="off">
             <select id="filtroCategoria">
-                <option value="todas">Todas</option>
+                <option value="todas">Todas las categorías</option>
                 <option value="Abarrotes">Abarrotes</option>
-                <option value="Lácteos y Huevos">Lácteos</option>
+                <option value="Lácteos y Huevos">Lácteos y Huevos</option>
                 <option value="Bebidas">Bebidas</option>
                 <option value="Golosinas y Paquetes">Golosinas</option>
-                <option value="Pan y Repostería">Pan</option>
+                <option value="Pan y Repostería">Pan y Repostería</option>
                 <option value="Aseo Personal">Aseo Personal</option>
                 <option value="Aseo Hogar">Aseo Hogar</option>
                 <option value="Miscelánea">Miscelánea</option>
@@ -46,25 +53,29 @@
         </div>
         <div class="tabla-container">
             <table class="tabla-inventario">
-                <thead><tr><th>Producto</th><th>Cat.</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead>
-                <tbody id="tablaProductos"><tr><td colspan="5">Cargando...</td></tr></tbody>
+                <thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead>
+                <tbody id="tablaProductos"><tr><td colspan="5" class="text-center">Cargando productos...</td></tr></tbody>
             </table>
         </div>
     </main>
 
     <div id="modalProducto" class="modal" style="display:none;">
         <div class="modal-content">
-            <h2>📦 Producto</h2>
+            <h2 id="modalTitulo">📦 Nuevo Producto</h2>
             <form id="formProducto">
                 <input type="hidden" id="productoId">
-                <div class="form-group"><label>Nombre *</label><input type="text" id="nombreProducto" required></div>
-                <div class="form-group"><label>Categoría</label><select id="categoriaProducto"><option value="Abarrotes">Abarrotes</option><option value="Lácteos y Huevos">Lácteos</option><option value="Bebidas">Bebidas</option><option value="Golosinas y Paquetes">Golosinas</option><option value="Pan y Repostería">Pan</option><option value="Aseo Personal">Aseo Personal</option><option value="Aseo Hogar">Aseo Hogar</option><option value="Miscelánea">Miscelánea</option></select></div>
-                <div class="form-group"><label>Unidad</label><select id="unidadProducto"><option value="UNIDAD">Unidad</option><option value="LIBRA">Libra (500g)</option><option value="KILO">Kilo</option><option value="LITRO">Litro</option><option value="BOLSA">Bolsa</option></select></div>
-                <div class="form-group"><label>Precio *</label><input type="number" id="precioVenta" required step="100" min="100"></div>
-                <div class="form-group"><label>Stock</label><input type="number" id="cantidadInicial" step="1" min="0" value="0"></div>
+                <div class="form-group"><label>Nombre del Producto *</label><input type="text" id="nombreProducto" required placeholder="Ej: Arroz Libra"></div>
+                <div class="form-group"><label>Categoría *</label><select id="categoriaProducto" required><option value="">Seleccionar...</option><option value="Abarrotes">Abarrotes</option><option value="Lácteos y Huevos">Lácteos y Huevos</option><option value="Bebidas">Bebidas</option><option value="Golosinas y Paquetes">Golosinas</option><option value="Pan y Repostería">Pan y Repostería</option><option value="Aseo Personal">Aseo Personal</option><option value="Aseo Hogar">Aseo Hogar</option><option value="Miscelánea">Miscelánea</option></select></div>
+                <div class="form-group"><label>Unidad de Medida</label><select id="unidadProducto"><option value="UNIDAD">Unidad</option><option value="LIBRA">Libra (500g)</option><option value="KILO">Kilo</option><option value="LITRO">Litro</option><option value="BOLSA">Bolsa</option><option value="SOBRE">Sobre</option></select></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Precio de Venta *</label><input type="number" id="precioVenta" required placeholder="$" step="100" min="100"></div>
+                    <div class="form-group"><label>Precio de Compra</label><input type="number" id="precioCompra" placeholder="$" step="100" min="100"></div>
+                </div>
+                <div class="form-group"><label>Cantidad Inicial</label><input type="number" id="cantidadInicial" placeholder="0" step="1" min="0"></div>
+                <div class="form-group"><label>Stock Mínimo (alertas)</label><input type="number" id="stockMinimo" placeholder="5" min="0" value="5"></div>
                 <div class="modal-acciones">
                     <button type="button" onclick="cerrarModalProducto()" class="btn-cancelar">Cancelar</button>
-                    <button type="submit" class="btn-confirmar">💾 Guardar</button>
+                    <button type="submit" class="btn-confirmar">💾 Guardar Producto</button>
                 </div>
             </form>
         </div>

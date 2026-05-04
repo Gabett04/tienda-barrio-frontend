@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../css/fiao.css">
     <link rel="stylesheet" href="../css/menu.css">
     <link rel="stylesheet" href="../css/ventas.css">
+    <style>
+        body { overflow: auto !important; padding-bottom: 80px; }
+        .fiao-content { max-height: calc(100vh - 140px); overflow-y: auto; padding: 20px; }
+        @media (max-width: 768px) {
+            .fiao-content { max-height: calc(100vh - 180px); padding: 10px; }
+        }
+    </style>
 </head>
 <body>
     <header class="top-bar">
@@ -31,24 +38,27 @@
 
     <main class="fiao-content">
         <div class="resumen-fiao">
-            <div class="resumen-card"><h3>Prestado</h3><p id="totalPrestado">$0</p></div>
-            <div class="resumen-card"><h3>Abonado</h3><p id="totalAbonado">$0</p></div>
-            <div class="resumen-card"><h3>Pendiente</h3><p id="saldoPendiente">$0</p></div>
+            <div class="resumen-card"><h3>Total Prestado</h3><p id="totalPrestado">$0</p></div>
+            <div class="resumen-card"><h3>Total Abonado</h3><p id="totalAbonado">$0</p></div>
+            <div class="resumen-card"><h3>Saldo Pendiente</h3><p id="saldoPendiente">$0</p></div>
         </div>
-        <div class="lista-clientes" id="listaClientes"><p class="text-center">No hay clientes</p></div>
+        <div class="lista-clientes" id="listaClientes">
+            <p class="text-center">No hay clientes con crédito</p>
+        </div>
     </main>
 
     <div id="modalCliente" class="modal" style="display:none;">
         <div class="modal-content">
-            <h2>👤 Nuevo Cliente</h2>
+            <h2>👤 Nuevo Cliente Crédito</h2>
             <form id="formCliente">
-                <div class="form-group"><label>Nombre *</label><input type="text" id="nombreCliente" required></div>
-                <div class="form-group"><label>Apodo</label><input type="text" id="apodoCliente"></div>
-                <div class="form-group"><label>Teléfono</label><input type="tel" id="telefonoCliente"></div>
-                <div class="form-group"><label>Cupo Máximo *</label><input type="number" id="cupoCliente" required step="100" value="50000"></div>
+                <div class="form-group"><label>Nombre Completo *</label><input type="text" id="nombreCliente" required placeholder="Ej: María García"></div>
+                <div class="form-group"><label>Apodo / Como lo conocen</label><input type="text" id="apodoCliente" placeholder="Ej: Doña Mary"></div>
+                <div class="form-group"><label>Teléfono</label><input type="tel" id="telefonoCliente" placeholder="3101234567"></div>
+                <div class="form-group"><label>Dirección</label><input type="text" id="direccionCliente" placeholder="Misma cuadra, casa azul"></div>
+                <div class="form-group"><label>Cupo Máximo de Crédito *</label><input type="number" id="cupoCliente" required placeholder="$" step="100" min="100" value="50000"></div>
                 <div class="modal-acciones">
                     <button type="button" onclick="cerrarModalCliente()" class="btn-cancelar">Cancelar</button>
-                    <button type="submit" class="btn-confirmar">💾 Guardar</button>
+                    <button type="submit" class="btn-confirmar">💾 Guardar Cliente</button>
                 </div>
             </form>
         </div>
@@ -57,11 +67,12 @@
     <div id="modalAbono" class="modal" style="display:none;">
         <div class="modal-content">
             <h2>💰 Registrar Abono</h2>
-            <p id="nombreClienteAbono"></p>
-            <div class="form-group"><label>Monto *</label><input type="number" id="montoAbono" required step="100"></div>
+            <p id="nombreClienteAbono" style="font-size:18px;margin-bottom:10px;"></p>
+            <p id="saldoClienteAbono" style="color:#666;margin-bottom:20px;"></p>
+            <div class="form-group"><label>Monto del Abono *</label><input type="number" id="montoAbono" required placeholder="$" step="100" min="100"></div>
             <div class="modal-acciones">
                 <button onclick="cerrarModalAbono()" class="btn-cancelar">Cancelar</button>
-                <button onclick="registrarAbono()" class="btn-confirmar">✅ Registrar</button>
+                <button onclick="registrarAbono()" class="btn-confirmar">✅ Registrar Abono</button>
             </div>
         </div>
     </div>

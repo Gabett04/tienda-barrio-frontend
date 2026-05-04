@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../css/gastos.css">
     <link rel="stylesheet" href="../css/menu.css">
     <link rel="stylesheet" href="../css/ventas.css">
+    <style>
+        body { overflow: auto !important; padding-bottom: 80px; }
+        .gastos-content { max-height: calc(100vh - 140px); overflow-y: auto; padding: 20px; }
+        @media (max-width: 768px) {
+            .gastos-content { max-height: calc(100vh - 180px); padding: 10px; }
+        }
+    </style>
 </head>
 <body>
     <header class="top-bar">
@@ -31,23 +38,25 @@
 
     <main class="gastos-content">
         <div class="resumen-gastos">
-            <div class="resumen-card"><h3>Hoy</h3><p id="gastosHoy">$0</p></div>
-            <div class="resumen-card"><h3>Semana</h3><p id="gastosSemana">$0</p></div>
-            <div class="resumen-card"><h3>Mes</h3><p id="gastosMes">$0</p></div>
+            <div class="resumen-card"><h3>Gastos Hoy</h3><p id="gastosHoy">$0</p></div>
+            <div class="resumen-card"><h3>Esta Semana</h3><p id="gastosSemana">$0</p></div>
+            <div class="resumen-card"><h3>Este Mes</h3><p id="gastosMes">$0</p></div>
         </div>
-        <div class="lista-gastos" id="listaGastos"><p class="text-center">No hay gastos</p></div>
+        <div class="lista-gastos" id="listaGastos">
+            <p class="text-center">No hay gastos registrados</p>
+        </div>
     </main>
 
     <div id="modalGasto" class="modal" style="display:none;">
         <div class="modal-content">
             <h2>💸 Registrar Gasto</h2>
             <form id="formGasto">
-                <div class="form-group"><label>Categoría *</label><select id="categoriaGasto" required><option value="">Seleccionar...</option><option value="Mercancía">📦 Mercancía</option><option value="Transporte">🚗 Transporte</option><option value="Servicios">💡 Servicios</option><option value="Empleado">👤 Empleado</option><option value="Bolsas/Empaques">🛍️ Empaques</option><option value="Aseo Tienda">🧹 Aseo</option><option value="Otros">📋 Otros</option></select></div>
-                <div class="form-group"><label>Descripción</label><input type="text" id="descripcionGasto"></div>
-                <div class="form-group"><label>Monto *</label><input type="number" id="montoGasto" required step="100" min="100"></div>
+                <div class="form-group"><label>Categoría *</label><select id="categoriaGasto" required><option value="">Seleccionar...</option><option value="Mercancía">📦 Mercancía</option><option value="Transporte">🚗 Transporte</option><option value="Servicios">💡 Servicios (Luz, Agua)</option><option value="Empleado">👤 Pago Empleado</option><option value="Bolsas/Empaques">🛍️ Bolsas y Empaques</option><option value="Aseo Tienda">🧹 Aseo Tienda</option><option value="Otros">📋 Otros</option></select></div>
+                <div class="form-group"><label>Descripción</label><input type="text" id="descripcionGasto" placeholder="Ej: Pago del día al ayudante"></div>
+                <div class="form-group"><label>Monto * (múltiplo de $100)</label><input type="number" id="montoGasto" required placeholder="$" step="100" min="100"></div>
                 <div class="modal-acciones">
                     <button type="button" onclick="cerrarModalGasto()" class="btn-cancelar">Cancelar</button>
-                    <button type="submit" class="btn-confirmar">💾 Guardar</button>
+                    <button type="submit" class="btn-confirmar">💾 Guardar Gasto</button>
                 </div>
             </form>
         </div>
