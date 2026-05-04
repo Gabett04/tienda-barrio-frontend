@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Ventas - Tienda Barrio</title>
+    <link rel="stylesheet" href="../css/ventas.css">
+    <link rel="stylesheet" href="../css/menu.css">
+</head>
+<body>
+    <header class="top-bar">
+        <div class="tienda-info">
+            <h1>🏪 <span id="nombreTienda">Cargando...</span></h1>
+            <span id="codigoTienda" class="codigo"></span>
+        </div>
+        <nav class="pc-nav">
+            <a href="dashboard.html">🏠 Inicio</a>
+            <a href="ventas.html" class="active">💰 Ventas</a>
+            <a href="inventario.html">📦 Inventario</a>
+            <a href="gastos.html">💸 Gastos</a>
+            <a href="fiao.html">👥 Crédito</a>
+            <a href="reportes.html">📊 Reportes</a>
+        </nav>
+        <div class="user-info">
+            <span id="nombreUsuario"></span>
+            <button onclick="cerrarSesion()" class="btn-logout">🚪</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="productos-panel">
+            <div class="buscador"><input type="text" id="buscarProducto" placeholder="🔍 Buscar producto..." autocomplete="off"></div>
+            <div class="categorias" id="categorias"><button class="categoria-btn active" data-categoria="todas">📦 Todas</button></div>
+            <div class="productos-grid" id="productosGrid"><p>Cargando...</p></div>
+        </section>
+        <section class="carrito-panel">
+            <h2>🛒 Carrito</h2>
+            <div class="carrito-items" id="carritoItems"><p class="carrito-vacio">No hay productos</p></div>
+            <div class="carrito-totales">
+                <div class="total-line"><span>Subtotal:</span><span id="subtotal">$0</span></div>
+                <div class="total-line total-final"><strong>TOTAL:</strong><strong id="totalFinal">$0</strong></div>
+            </div>
+            <div class="carrito-acciones">
+                <button onclick="vaciarCarrito()" class="btn-vaciar">🗑️</button>
+                <button onclick="cobrar()" class="btn-cobrar">💵 COBRAR</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="modalCobro" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h2>💵 Cobrar Venta</h2>
+            <div class="total-cobro"><h1 id="totalCobro">$0</h1></div>
+            <div class="opciones-pago">
+                <button onclick="seleccionarPago('EFECTIVO')" class="pago-btn">💵 Efectivo</button>
+                <button onclick="seleccionarPago('NEQUI')" class="pago-btn">📱 Nequi</button>
+                <button onclick="seleccionarPago('DAVIPLATA')" class="pago-btn">📱 Daviplata</button>
+                <button onclick="seleccionarPago('CREDITO')" class="pago-btn">📝 Crédito</button>
+            </div>
+            <div id="pagoEfectivo" class="pago-detalle" style="display:none;">
+                <label>¿Con cuánto paga?</label>
+                <input type="number" id="pagaCon" placeholder="$" step="100" min="0">
+                <div class="cambio-info"><h3>Cambio: <span id="cambio">$0</span></h3></div>
+            </div>
+            <div id="pagoFiao" class="pago-detalle" style="display:none;">
+                <label>Cliente:</label>
+                <select id="clienteFiao"><option value="">-- Seleccionar --</option></select>
+            </div>
+            <div class="modal-acciones">
+                <button onclick="cancelarCobro()" class="btn-cancelar">Cancelar</button>
+                <button onclick="confirmarVenta()" class="btn-confirmar">✅ Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-text">Inicio</span></a>
+        <a href="ventas.html" class="nav-item active"><span class="nav-icon">💰</span><span class="nav-text">Ventas</span></a>
+        <a href="inventario.html" class="nav-item"><span class="nav-icon">📦</span><span class="nav-text">Inventario</span></a>
+        <a href="gastos.html" class="nav-item"><span class="nav-icon">💸</span><span class="nav-text">Gastos</span></a>
+        <a href="fiao.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-text">Crédito</span></a>
+    </nav>
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
+                if (confirm('🔄 ¡Nueva versión! ¿Actualizar?')) { window.location.reload(); }
+            }
+        });
+        setInterval(function() {
+            navigator.serviceWorker.getRegistration().then(function(reg) { if (reg) reg.update(); });
+        }, 300000);
+    }
+    </script>
+    <script src="../js/config.js"></script>
+    <script src="../js/sync.js"></script>
+    <script src="../js/ventas.js"></script>
+</body>
+</html>

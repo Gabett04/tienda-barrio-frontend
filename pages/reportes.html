@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Reportes - Tienda Barrio</title>
+    <link rel="stylesheet" href="../css/reportes.css">
+    <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/ventas.css">
+    <style>
+        body { overflow: auto !important; padding-bottom: 80px; }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <div class="tienda-info">
+            <h1>🏪 <span id="nombreTienda">Cargando...</span></h1>
+            <span id="codigoTienda" class="codigo"></span>
+        </div>
+        <nav class="pc-nav">
+            <a href="dashboard.html">🏠 Inicio</a>
+            <a href="ventas.html">💰 Ventas</a>
+            <a href="inventario.html">📦 Inventario</a>
+            <a href="gastos.html">💸 Gastos</a>
+            <a href="fiao.html">👥 Crédito</a>
+            <a href="reportes.html" class="active">📊 Reportes</a>
+        </nav>
+        <button onclick="descargarReporte()" class="btn-descargar">📥 Descargar CSV</button>
+        <div class="user-info">
+            <span id="nombreUsuario"></span>
+            <button onclick="cerrarSesion()" class="btn-logout">🚪</button>
+        </div>
+    </header>
+
+    <main class="reportes-content">
+        <div class="selector-periodo">
+            <button class="periodo-btn active" data-periodo="hoy">Hoy</button>
+            <button class="periodo-btn" data-periodo="semana">Semana</button>
+            <button class="periodo-btn" data-periodo="mes">Mes</button>
+        </div>
+        <div class="resumen-reporte">
+            <div class="reporte-card ventas"><h3>💰 Ventas</h3><p id="totalVentas">$0</p></div>
+            <div class="reporte-card contado"><h3>💵 Contado</h3><p id="ventasContado">$0</p></div>
+            <div class="reporte-card fiao"><h3>📝 Crédito</h3><p id="ventasFiao">$0</p></div>
+            <div class="reporte-card gastos"><h3>💸 Gastos</h3><p id="totalGastos">$0</p></div>
+            <div class="reporte-card abonos-card"><h3>💰 Abonos</h3><p id="totalAbonos">$0</p></div>
+            <div class="reporte-card ganancia"><h3>📈 Neto</h3><p id="gananciaNeta">$0</p></div>
+        </div>
+        <div class="graficas-container">
+            <div class="grafica-card"><h3>📊 Ventas vs Gastos</h3><canvas id="graficaVentasGastos"></canvas></div>
+            <div class="grafica-card"><h3>📈 Tendencia</h3><canvas id="graficaPagos"></canvas></div>
+        </div>
+        <div class="secciones-reporte">
+            <div class="seccion"><div id="listaVentas"></div></div>
+            <div class="seccion"><div id="listaAbonos"></div></div>
+            <div class="seccion"><div id="listaCuentasCobrar"></div></div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-text">Inicio</span></a>
+        <a href="ventas.html" class="nav-item"><span class="nav-icon">💰</span><span class="nav-text">Ventas</span></a>
+        <a href="inventario.html" class="nav-item"><span class="nav-icon">📦</span><span class="nav-text">Inventario</span></a>
+        <a href="gastos.html" class="nav-item"><span class="nav-icon">💸</span><span class="nav-text">Gastos</span></a>
+        <a href="fiao.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-text">Crédito</span></a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/reportes.js"></script>
+</body>
+</html>

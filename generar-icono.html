@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generar Icono</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f0f0f0;
+        }
+        .icono {
+            width: 512px;
+            height: 512px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 250px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .descargar-btn {
+            position: fixed;
+            bottom: 30px;
+            padding: 15px 30px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="icono" id="icono">🏪</div>
+    <button class="descargar-btn" onclick="descargarIcono()">📥 Descargar Icono 512x512</button>
+
+    <script>
+        function descargarIcono() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            // Fondo
+            const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+            gradient.addColorStop(0, '#4CAF50');
+            gradient.addColorStop(1, '#45a049');
+            ctx.fillStyle = gradient;
+            
+            // Dibujar rectángulo redondeado
+            const radius = 80;
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.lineTo(512 - radius, 0);
+            ctx.quadraticCurveTo(512, 0, 512, radius);
+            ctx.lineTo(512, 512 - radius);
+            ctx.quadraticCurveTo(512, 512, 512 - radius, 512);
+            ctx.lineTo(radius, 512);
+            ctx.quadraticCurveTo(0, 512, 0, 512 - radius);
+            ctx.lineTo(0, radius);
+            ctx.quadraticCurveTo(0, 0, radius, 0);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Emoji
+            ctx.fillStyle = 'white';
+            ctx.font = '200px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🏪', 256, 256);
+            
+            // Descargar
+            const link = document.createElement('a');
+            link.download = 'icon-512.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            // También crear versión 192x192
+            const canvas192 = document.createElement('canvas');
+            canvas192.width = 192;
+            canvas192.height = 192;
+            const ctx192 = canvas192.getContext('2d');
+            ctx192.drawImage(canvas, 0, 0, 512, 512, 0, 0, 192, 192);
+            
+            const link192 = document.createElement('a');
+            link192.download = 'icon-192.png';
+            link192.href = canvas192.toDataURL('image/png');
+            setTimeout(() => link192.click(), 500);
+            
+            alert('✅ Iconos descargados: icon-512.png e icon-192.png\nMueve ambos archivos a la carpeta img/');
+        }
+    </script>
+</body>
+</html>

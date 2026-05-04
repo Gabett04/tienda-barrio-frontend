@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Inicio - Tienda Barrio</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/menu.css">
+</head>
+<body>
+    <header class="top-bar">
+        <div class="tienda-info">
+            <h1>🏪 <span id="nombreTienda">Cargando...</span></h1>
+            <span id="codigoTienda" class="codigo"></span>
+        </div>
+        <nav class="pc-nav">
+            <a href="dashboard.html" class="active">🏠 Inicio</a>
+            <a href="ventas.html">💰 Ventas</a>
+            <a href="inventario.html">📦 Inventario</a>
+            <a href="gastos.html">💸 Gastos</a>
+            <a href="fiao.html">👥 Crédito</a>
+            <a href="reportes.html">📊 Reportes</a>
+        </nav>
+        <div class="user-info">
+            <span id="nombreUsuario"></span>
+            <button onclick="cerrarSesion()" class="btn-logout">🚪</button>
+        </div>
+    </header>
+
+    <main class="dashboard-content">
+        <h2 class="saludo">👋 ¡Buenos días! <span id="fechaHoy"></span></h2>
+
+        <div class="kpi-grid">
+            <div class="kpi-card verde" onclick="irA('ventas.html')"><div class="kpi-icon">💰</div><div class="kpi-valor" id="kpiVentasHoy">$0</div><div class="kpi-label">Ventas Hoy</div></div>
+            <div class="kpi-card azul" onclick="irA('ventas.html')"><div class="kpi-icon">🛒</div><div class="kpi-valor" id="kpiTransacciones">0</div><div class="kpi-label">Transacciones</div></div>
+            <div class="kpi-card naranja" onclick="irA('fiao.html')"><div class="kpi-icon">📝</div><div class="kpi-valor" id="kpiFiaoPendiente">$0</div><div class="kpi-label">Crédito Pendiente</div></div>
+            <div class="kpi-card rojo" onclick="irA('gastos.html')"><div class="kpi-icon">💸</div><div class="kpi-valor" id="kpiGastosHoy">$0</div><div class="kpi-label">Gastos Hoy</div></div>
+            <div class="kpi-card morado"><div class="kpi-icon">📈</div><div class="kpi-valor" id="kpiGanancia">$0</div><div class="kpi-label">Ganancia Neta</div></div>
+        </div>
+
+        <div class="alertas-section" id="alertasSection"></div>
+
+        <div class="acceso-rapido">
+            <h3>⚡ Acceso Rápido</h3>
+            <div class="acceso-grid">
+                <button class="acceso-btn" onclick="irA('ventas.html')"><span>💰</span> Nueva Venta</button>
+                <button class="acceso-btn" onclick="irA('gastos.html')"><span>💸</span> Registrar Gasto</button>
+                <button class="acceso-btn" onclick="irA('inventario.html')"><span>📦</span> Ver Inventario</button>
+                <button class="acceso-btn" onclick="irA('reportes.html')"><span>📊</span> Ver Reportes</button>
+            </div>
+        </div>
+
+        <div class="ultimas-ventas">
+            <h3>🕐 Últimas Ventas</h3>
+            <div id="ultimasVentas"></div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span><span class="nav-text">Inicio</span></a>
+        <a href="ventas.html" class="nav-item"><span class="nav-icon">💰</span><span class="nav-text">Ventas</span></a>
+        <a href="inventario.html" class="nav-item"><span class="nav-icon">📦</span><span class="nav-text">Inventario</span></a>
+        <a href="gastos.html" class="nav-item"><span class="nav-icon">💸</span><span class="nav-text">Gastos</span></a>
+        <a href="fiao.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-text">Crédito</span></a>
+    </nav>
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
+                if (confirm('🔄 ¡Nueva versión! ¿Actualizar?')) { window.location.reload(); }
+            }
+        });
+        setInterval(function() {
+            navigator.serviceWorker.getRegistration().then(function(reg) { if (reg) reg.update(); });
+        }, 300000);
+    }
+    </script>
+    <script src="../js/config.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>

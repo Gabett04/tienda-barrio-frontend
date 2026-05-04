@@ -1,0 +1,82 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+
+.top-bar { background: #2196F3; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+.top-bar h1 { font-size: 20px; }
+.btn-descargar { background: white; color: #2196F3; border: none; padding: 10px 20px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
+
+.reportes-content { padding: 20px; max-width: 1000px; margin: 0 auto; }
+
+.selector-periodo { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.periodo-btn { padding: 10px 20px; background: white; border: 2px solid #e0e0e0; border-radius: 10px; cursor: pointer; font-size: 14px; transition: all 0.3s; }
+.periodo-btn.active { background: #2196F3; color: white; border-color: #2196F3; }
+
+.fechas-personalizado { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; background: white; padding: 10px 15px; border-radius: 10px; }
+.fechas-personalizado input { flex: 1; padding: 8px; border: 2px solid #e0e0e0; border-radius: 8px; }
+.btn-generar { padding: 8px 20px; background: #2196F3; color: white; border: none; border-radius: 8px; cursor: pointer; }
+
+.resumen-reporte { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+.reporte-card { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.reporte-card h3 { font-size: 13px; margin-bottom: 10px; color: #666; }
+.reporte-card p { font-size: 22px; font-weight: bold; }
+
+.ventas h3, .ventas p { color: #4CAF50; }
+.contado h3, .contado p { color: #2196F3; }
+.fiao h3, .fiao p { color: #FF9800; }
+.gastos h3, .gastos p { color: #ff5252; }
+.abonos-card h3, .abonos-card p { color: #00BCD4; }
+.ganancia h3, .ganancia p { color: #9C27B0; }
+.transacciones h3, .transacciones p { color: #607D8B; }
+
+/* Gráficas */
+.graficas-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+.grafica-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.grafica-card h3 { text-align: center; margin-bottom: 15px; color: #333; }
+.grafica-card canvas { max-height: 250px; }
+
+.secciones-reporte { display: flex; flex-direction: column; gap: 30px; }
+.seccion { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+.venta-item { border: 1px solid #f0f0f0; border-radius: 10px; padding: 15px; margin-bottom: 10px; }
+.venta-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.venta-fecha { color: #666; font-size: 13px; }
+.venta-pago { font-size: 12px; padding: 2px 8px; border-radius: 5px; }
+.pago-contado { background: #e8f5e9; color: #2e7d32; }
+.pago-fiao { background: #fff3e0; color: #e65100; }
+.venta-cliente { background: #f5f5f5; padding: 5px 10px; border-radius: 5px; font-size: 13px; margin-bottom: 8px; }
+.venta-productos { border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; padding: 8px 0; margin-bottom: 8px; }
+.venta-producto { display: flex; justify-content: space-between; font-size: 14px; padding: 2px 0; }
+.venta-total { text-align: right; color: #4CAF50; }
+
+.abono-item { border: 1px solid #e0f7fa; background: #f5fdfe; border-radius: 10px; padding: 12px 15px; margin-bottom: 8px; }
+.abono-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.abono-fecha { color: #666; font-size: 13px; }
+.abono-monto { color: #00BCD4; font-weight: bold; font-size: 16px; }
+
+.cuenta-item { border: 1px solid #f0f0f0; border-radius: 10px; padding: 15px; margin-bottom: 10px; }
+.cuenta-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.cuenta-estado { font-size: 12px; padding: 3px 8px; border-radius: 5px; }
+.cuenta-estado.activo { background: #e8f5e9; color: #2e7d32; }
+.cuenta-estado.bloqueado { background: #ffebee; color: #c62828; }
+.cuenta-saldos { margin-bottom: 10px; }
+.saldo-row { display: flex; justify-content: space-between; font-size: 14px; padding: 3px 0; }
+.saldo-pendiente { border-top: 1px solid #f0f0f0; padding-top: 8px; margin-top: 5px; font-size: 16px; }
+.barra-cupo { height: 6px; background: #e0e0e0; border-radius: 3px; margin-bottom: 5px; overflow: hidden; }
+.barra-progreso { height: 100%; border-radius: 3px; }
+.deuda-ok { background: #4CAF50; }
+.deuda-alerta { background: #FF9800; }
+.deuda-peligro { background: #ff5252; }
+
+.text-center { text-align: center; color: #999; padding: 40px; }
+
+@media (max-width: 768px) {
+    body { padding-bottom: 70px; }
+    .resumen-reporte { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .reporte-card { padding: 12px; }
+    .reporte-card h3 { font-size: 11px; }
+    .reporte-card p { font-size: 16px; }
+    .graficas-container { grid-template-columns: 1fr; }
+    .selector-periodo { gap: 5px; }
+    .periodo-btn { padding: 8px 14px; font-size: 12px; }
+}
