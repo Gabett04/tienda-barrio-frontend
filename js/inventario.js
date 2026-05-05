@@ -71,6 +71,14 @@ function guardarProducto() {
     if(typeof Sync!=='undefined') Sync.sincronizarProducto({ id:datos.id, nombre:datos.nombre, stock:datos.stock, precio:datos.precio });
 }
 
+function eliminarTodos() {
+    if (!confirm('⚠️ ¿Eliminar TODOS los productos? Esta acción no se puede deshacer.')) return;
+    if (!confirm('¿Estás completamente seguro?')) return;
+    localStorage.removeItem(CONFIG.STORAGE_KEYS.PRODUCTOS);
+    cargarProductos();
+    alert('✅ Todos los productos eliminados');
+}
+
 function agregarStock(id) { var c=prompt('Cantidad:'); if(!c) return; c=parseFloat(c); if(isNaN(c)||c<=0) return; var p=getProductos(); var idx=p.findIndex(function(x){ return x.id===id; }); if(idx!==-1) p[idx].stock+=c; guardarProductos(p); cargarProductos(); }
 function eliminarProducto(id) { if(!confirm('¿Eliminar?')) return; guardarProductos(getProductos().filter(function(x){ return x.id!==id; })); cargarProductos(); }
 function cerrarModalProducto() { document.getElementById('modalProducto').style.display='none'; productoEditando=null; }
