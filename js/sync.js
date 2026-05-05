@@ -1,17 +1,12 @@
 var Sync = {
-    token: function() {
-        return localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN);
-    },
+    token: function() { return localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN); },
     
     subir: async function(tipo, datos) {
         if (!navigator.onLine) return;
         try {
             await fetch(CONFIG.API_URL + '/sync/' + tipo, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + this.token()
-                },
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.token() },
                 body: JSON.stringify(datos)
             });
         } catch(e) {}
@@ -20,9 +15,7 @@ var Sync = {
     bajar: async function() {
         if (!navigator.onLine) return;
         try {
-            var resp = await fetch(CONFIG.API_URL + '/sync/todo', {
-                headers: { 'Authorization': 'Bearer ' + this.token() }
-            });
+            var resp = await fetch(CONFIG.API_URL + '/sync/todo', { headers: { 'Authorization': 'Bearer ' + this.token() } });
             if (!resp.ok) return;
             var data = await resp.json();
             
@@ -30,12 +23,8 @@ var Sync = {
                 var local = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.PRODUCTOS) || '[]');
                 data.inventario.forEach(function(p) {
                     var existe = local.find(function(l) { return l.id === p.id_producto_local; });
-                    if (!existe) {
-                        local.push({ id: p.id_producto_local, nombre: p.nombre_producto, precio: p.precio_venta, stock: p.stock_actual, categoria: 'Abarrotes', unidad: 'UNIDAD', stockMinimo: 5 });
-                    } else {
-                        existe.stock = p.stock_actual;
-                        existe.precio = p.precio_venta;
-                    }
+                    if (!existe) { local.push({ id: p.id_producto_local, nombre: p.nombre_producto, precio: p.precio_venta, stock: p.stock_actual, categoria: 'Abarrotes', unidad: 'UNIDAD', stockMinimo: 5 }); }
+                    else { existe.stock = p.stock_actual; existe.precio = p.precio_venta; }
                 });
                 localStorage.setItem(CONFIG.STORAGE_KEYS.PRODUCTOS, JSON.stringify(local));
             }
@@ -54,21 +43,28 @@ var Sync = {
             if (data.gastos && data.gastos.length > 0) {
                 var lg = JSON.parse(localStorage.getItem('tienda_gastos') || '[]');
                 var ig = lg.map(function(g) { return g.id; });
-                data.gastos.forEach(function(g) {
-                    if (ig.indexOf(g.id_gasto_local) === -1) {
-                        lg.push({ id: g.id_gasto_local, categoria: g.categoria, descripcion: g.descripcion, monto: g.monto, fecha: g.fecha });
-                    }
-                });
+                data.gastos.forEach(function(g) { if (ig.indexOf(g.id_gasto_local) === -1) { lg.push({ id: g.id_gasto_local, categoria: g.categoria, descripcion: g.descripcion, monto: g.monto, fecha: g.fecha }); } });
                 localStorage.setItem('tienda_gastos', JSON.stringify(lg));
+            }
+            
+            if (data.clientes && data.clientes.length > 0) {
+                var lc = JSON.parse(localStorage.getItem('tienda_clientes_fiao') || '[]');
+                var ic = lc.map(function(c) { return c.id; });
+                data.clientes.forEach(function(c) {
+                    var clienteData = { id: c.id_cliente_local, nombre: c.nombre, apodo: c.apodo, telefono: c.telefono, cupoMaximo: c.cupo_maximo, saldo: c.saldo, totalPrestado: c.total_prestado, totalAbonado: c.total_abonado, estado: c.estado };
+                    if (ic.indexOf(c.id_cliente_local) === -1) { lc.push(clienteData); }
+                    else { var idx = lc.findIndex(function(x) { return x.id === c.id_cliente_local; }); if (idx !== -1) { lc[idx] = clienteData; } }
+                });
+                localStorage.setItem('tienda_clientes_fiao', JSON.stringify(lc));
             }
         } catch(e) {}
     },
     
-    sincronizarVenta: function(venta) { this.subir('venta', venta); },
+    sincronizarVenta: function(v) { this.subir('venta', v); },
     sincronizarProducto: function(p) { this.subir('inventario', p); },
-    sincronizarGasto: function(g) { this.subir('gasto', g); }
+    sincronizarGasto: function(g) { this.subir('gasto', g); },
+    sincronizarCliente: function(c) { this.subir('cliente', c); }
 };
 
-// Descargar cada 10 segundos para mantener sincronizado
 setInterval(function() { Sync.bajar(); }, 10000);
 Sync.bajar();
