@@ -69,7 +69,12 @@ function mostrarProductos(lista) {
     grid.innerHTML = lista.map(function(p) {
         var precioTexto = '$' + p.precio.toLocaleString();
         var unidadTexto = p.unidad === 'LIBRA' ? ' x 500g' : '';
-        var stockTexto = p.unidad === 'LIBRA' ? (p.stock) + 'g' : p.stock;
+        var stockTexto;
+if (p.unidad === 'LIBRA') {
+    stockTexto = parseInt(p.stock).toLocaleString() + 'g';
+} else {
+    stockTexto = parseInt(p.stock).toLocaleString();
+}
         return '<div class="producto-card' + (p.stock <= 0 ? ' sin-stock' : '') + '" ' + (p.stock > 0 ? 'onclick="agregarAlCarrito(' + p.id + ')"' : '') + '>' +
             '<div class="producto-nombre">' + p.nombre + '</div>' +
             '<div class="producto-precio">' + precioTexto + unidadTexto + '</div>' +

@@ -25,7 +25,12 @@ function cargarProductos() {
     if (productos.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay productos</td></tr>'; return; }
     tbody.innerHTML = productos.map(function(p) {
         var stockClass = p.stock <= (p.stockMinimo||5) ? 'stock-bajo' : 'stock-normal';
-        var stockMostrar = p.unidad === 'LIBRA' ? (p.stock)+'g' : p.stock;
+        var stockMostrar;
+if (p.unidad === 'LIBRA') {
+    stockMostrar = parseInt(p.stock).toLocaleString() + 'g';
+} else {
+    stockMostrar = parseInt(p.stock).toLocaleString();
+}
         return '<tr><td><strong>'+p.nombre+'</strong></td><td>'+(p.categoria||'-')+'</td><td>$'+p.precio.toLocaleString()+(p.unidad==='LIBRA'?'/lb':'')+'</td><td class="'+stockClass+'">'+stockMostrar+'</td><td><button class="btn-accion btn-stock" onclick="agregarStock('+p.id+')">+</button> <button class="btn-accion btn-editar" onclick="editarProducto('+p.id+')">✏️</button> <button class="btn-accion btn-eliminar" onclick="eliminarProducto('+p.id+')">🗑️</button></td></tr>';
     }).join('');
 }
