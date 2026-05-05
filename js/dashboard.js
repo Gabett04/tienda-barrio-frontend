@@ -67,7 +67,10 @@ function mostrarAlertas() {
     if (stockBajo.length > 0) {
         html += '<div class="alerta advertencia" onclick="irA(\'inventario.html\')" style="cursor:pointer;">' +
             '<span>⚠️</span><div><strong>' + stockBajo.length + ' productos con stock bajo</strong><br><small>' + 
-            stockBajo.slice(0, 3).map(function(p) { return p.nombre + ' (' + p.stock + ')' ; }).join(', ') + 
+            stockBajo.slice(0, 3).map(function(p) { 
+    var s = parseInt(p.stock);
+    return p.nombre + ' (' + s + (p.unidad === 'LIBRA' ? 'g' : '') + ')'; 
+}).join(', ') + 
             (stockBajo.length > 3 ? ' y más...' : '') + '</small></div></div>';
         alertas++;
     }
