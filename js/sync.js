@@ -51,7 +51,7 @@ var Sync = {
                 var lc = JSON.parse(localStorage.getItem('tienda_clientes_fiao') || '[]');
                 var ic = lc.map(function(c) { return c.id; });
                 data.clientes.forEach(function(c) {
-                    var clienteData = { id: c.id_cliente_local, nombre: c.nombre, apodo: c.apodo, telefono: c.telefono, cupoMaximo: c.cupo_maximo, saldo: c.saldo, totalPrestado: c.total_prestado, totalAbonado: c.total_abonado, estado: c.estado };
+                    var clienteData = { id: c.id_cliente_local, nombre: c.nombre, apodo: c.apodo, telefono: c.telefono, direccion: '', cupoMaximo: c.cupo_maximo, saldo: c.saldo, totalPrestado: c.total_prestado, totalAbonado: c.total_abonado, estado: c.estado };
                     if (ic.indexOf(c.id_cliente_local) === -1) { lc.push(clienteData); }
                     else { var idx = lc.findIndex(function(x) { return x.id === c.id_cliente_local; }); if (idx !== -1) { lc[idx] = clienteData; } }
                 });
