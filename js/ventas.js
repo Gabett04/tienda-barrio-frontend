@@ -51,8 +51,12 @@ function cargarClientesFiaoSelect() {
 
 function cargarProductos() {
     var guardados = localStorage.getItem(CONFIG.STORAGE_KEYS.PRODUCTOS);
-    productos = guardados ? JSON.parse(guardados) : productosEjemplo;
-    if (!guardados) localStorage.setItem(CONFIG.STORAGE_KEYS.PRODUCTOS, JSON.stringify(productos));
+    if (guardados) {
+    productos = JSON.parse(guardados);
+} else {
+    productos = [];
+    localStorage.setItem(CONFIG.STORAGE_KEYS.PRODUCTOS, JSON.stringify([]));
+}
     mostrarProductos(productos); cargarCategorias();
 }
 
