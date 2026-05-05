@@ -51,12 +51,8 @@ function cargarClientesFiaoSelect() {
 
 function cargarProductos() {
     var guardados = localStorage.getItem(CONFIG.STORAGE_KEYS.PRODUCTOS);
-    if (guardados) {
-    productos = JSON.parse(guardados);
-} else {
-    productos = [];
-    localStorage.setItem(CONFIG.STORAGE_KEYS.PRODUCTOS, JSON.stringify([]));
-}
+    if (guardados) { productos = JSON.parse(guardados); }
+    else { productos = []; localStorage.setItem(CONFIG.STORAGE_KEYS.PRODUCTOS, JSON.stringify([])); }
     mostrarProductos(productos); cargarCategorias();
 }
 
@@ -74,11 +70,8 @@ function mostrarProductos(lista) {
         var precioTexto = '$' + p.precio.toLocaleString();
         var unidadTexto = p.unidad === 'LIBRA' ? ' x 500g' : '';
         var stockTexto;
-if (p.unidad === 'LIBRA') {
-    stockTexto = parseInt(p.stock).toLocaleString() + 'g';
-} else {
-    stockTexto = parseInt(p.stock).toLocaleString();
-}
+        if (p.unidad === 'LIBRA') { stockTexto = parseInt(p.stock).toLocaleString() + 'g'; }
+        else { stockTexto = parseInt(p.stock).toLocaleString(); }
         return '<div class="producto-card' + (p.stock <= 0 ? ' sin-stock' : '') + '" ' + (p.stock > 0 ? 'onclick="agregarAlCarrito(' + p.id + ')"' : '') + '>' +
             '<div class="producto-nombre">' + p.nombre + '</div>' +
             '<div class="producto-precio">' + precioTexto + unidadTexto + '</div>' +
@@ -208,13 +201,8 @@ function confirmarVenta() {
     if (medioPagoSeleccionado === 'CREDITO' && clienteFiaoData) {
         var clientes = JSON.parse(localStorage.getItem('tienda_clientes_fiao') || '[]');
         var idx = clientes.findIndex(function(c) { return c.id == clienteFiaoData.id; });
-        if (idx !== -1) { 
-            clientes[idx].saldo += total; 
-            clientes[idx].totalPrestado += total; 
-        }
+        if (idx !== -1) { clientes[idx].saldo += total; clientes[idx].totalPrestado += total; }
         localStorage.setItem('tienda_clientes_fiao', JSON.stringify(clientes));
-        
-        // SYNC CLIENTE
         if (typeof Sync !== 'undefined' && idx !== -1) {
             Sync.sincronizarCliente({
                 id: clientes[idx].id, nombre: clientes[idx].nombre, apodo: clientes[idx].apodo || '',
@@ -229,12 +217,16 @@ function confirmarVenta() {
     var ventasPendientes = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.VENTAS_PENDIENTES) || '[]');
     ventasPendientes.push(venta);
     localStorage.setItem(CONFIG.STORAGE_KEYS.VENTAS_PENDIENTES, JSON.stringify(ventasPendientes));
-    if (typeof Sync !== 'undefined') { Sync.sincronizarVenta(venta); productos.forEach(function(p) { Sync.sincronizarProducto({ id: p.id, nombre: p.nombre, stock: p.stock, precio: p.precio }); }); }
+    if (typeof Sync !== 'undefined') { 
+        Sync.sincronizarVenta(venta); 
+        productos.forEach(function(p) { Sync.sincronizarProducto({ id: p.id, nombre: p.nombre, stock: p.stock, precio: p.precio, unidad: p.unidad || 'UNIDAD' }); }); 
+    }
     
     var cambio = 0; if (medioPagoSeleccionado === 'EFECTIVO') cambio = (parseInt(document.getElementById('pagaCon').value) || 0) - total;
     mostrarTicket(venta, cambio);
     carrito = []; actualizarCarrito(); cancelarCobro(); cargarProductos();
 }
+
 function cancelarCobro() { document.getElementById('modalCobro').style.display = 'none'; medioPagoSeleccionado = null; }
 
 function mostrarTicket(venta, cambio) {

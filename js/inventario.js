@@ -26,11 +26,8 @@ function cargarProductos() {
     tbody.innerHTML = productos.map(function(p) {
         var stockClass = p.stock <= (p.stockMinimo||5) ? 'stock-bajo' : 'stock-normal';
         var stockMostrar;
-if (p.unidad === 'LIBRA') {
-    stockMostrar = parseInt(p.stock).toLocaleString() + 'g';
-} else {
-    stockMostrar = parseInt(p.stock).toLocaleString();
-}
+        if (p.unidad === 'LIBRA') { stockMostrar = parseInt(p.stock).toLocaleString() + 'g'; }
+        else { stockMostrar = parseInt(p.stock).toLocaleString(); }
         return '<tr><td><strong>'+p.nombre+'</strong></td><td>'+(p.categoria||'-')+'</td><td>$'+p.precio.toLocaleString()+(p.unidad==='LIBRA'?'/lb':'')+'</td><td class="'+stockClass+'">'+stockMostrar+'</td><td><button class="btn-accion btn-stock" onclick="agregarStock('+p.id+')">+</button> <button class="btn-accion btn-editar" onclick="editarProducto('+p.id+')">✏️</button> <button class="btn-accion btn-eliminar" onclick="eliminarProducto('+p.id+')">🗑️</button></td></tr>';
     }).join('');
 }
@@ -68,11 +65,11 @@ function guardarProducto() {
     else { datos.id=Date.now(); productos.push(datos); }
     guardarProductos(productos);
     cerrarModalProducto(); cargarProductos();
-    if(typeof Sync!=='undefined') Sync.sincronizarProducto({ id:datos.id, nombre:datos.nombre, stock:datos.stock, precio:datos.precio });
+    if(typeof Sync!=='undefined') Sync.sincronizarProducto({ id:datos.id, nombre:datos.nombre, stock:datos.stock, precio:datos.precio, unidad:datos.unidad });
 }
 
 function eliminarTodos() {
-    if (!confirm('⚠️ ¿Eliminar TODOS los productos? Esta acción no se puede deshacer.')) return;
+    if (!confirm('⚠️ ¿Eliminar TODOS los productos?')) return;
     if (!confirm('¿Estás completamente seguro?')) return;
     localStorage.removeItem(CONFIG.STORAGE_KEYS.PRODUCTOS);
     cargarProductos();

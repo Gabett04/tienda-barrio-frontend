@@ -23,8 +23,21 @@ var Sync = {
                 var local = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.PRODUCTOS) || '[]');
                 data.inventario.forEach(function(p) {
                     var existe = local.find(function(l) { return l.id === p.id_producto_local; });
-                    if (!existe) { local.push({ id: p.id_producto_local, nombre: p.nombre_producto, precio: p.precio_venta, stock: p.stock_actual, categoria: 'Abarrotes', unidad: 'UNIDAD', stockMinimo: 5 }); }
-                    else { existe.stock = p.stock_actual; existe.precio = p.precio_venta; }
+                    if (!existe) { 
+                        local.push({ 
+                            id: p.id_producto_local, 
+                            nombre: p.nombre_producto, 
+                            precio: p.precio_venta, 
+                            stock: p.stock_actual, 
+                            categoria: 'Abarrotes', 
+                            unidad: p.unidad || 'UNIDAD', 
+                            stockMinimo: 5 
+                        }); 
+                    } else { 
+                        existe.stock = p.stock_actual; 
+                        existe.precio = p.precio_venta; 
+                        existe.unidad = p.unidad || existe.unidad;
+                    }
                 });
                 localStorage.setItem(CONFIG.STORAGE_KEYS.PRODUCTOS, JSON.stringify(local));
             }
