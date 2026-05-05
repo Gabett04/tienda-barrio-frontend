@@ -24,16 +24,9 @@ const productosEjemplo = [
     { id: 15, nombre: 'Azúcar Libra', precio: 1200, stock: 80000, categoria: 'Abarrotes', unidad: 'LIBRA' }
 ];
 
-function esMovil() { return window.innerWidth <= 768; }
-function ajustarInterfaz() {
-    if (esMovil()) { document.body.classList.add('modo-movil'); document.body.classList.remove('modo-pc'); }
-    else { document.body.classList.add('modo-pc'); document.body.classList.remove('modo-movil'); }
-}
-window.addEventListener('resize', ajustarInterfaz);
-
 document.addEventListener('DOMContentLoaded', function() {
     verificarSesion(); cargarDatosTienda(); cargarProductos();
-    configurarBusqueda(); configurarCalculoCambio(); ajustarInterfaz();
+    configurarBusqueda(); configurarCalculoCambio();
 });
 
 function verificarSesion() { if (!localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN)) window.location.href = '../index.html'; }
@@ -75,8 +68,8 @@ function mostrarProductos(lista) {
     if (lista.length === 0) { grid.innerHTML = '<p class="mensaje-vacio">No hay productos</p>'; return; }
     grid.innerHTML = lista.map(function(p) {
         var precioTexto = '$' + p.precio.toLocaleString();
-        var unidadTexto = p.unidad === 'LIBRA' ? ' x libra (500g)' : '';
-        var stockTexto = p.unidad === 'LIBRA' ? (p.stock / 1000).toFixed(1) + 'kg' : p.stock;
+        var unidadTexto = p.unidad === 'LIBRA' ? ' x 500g' : '';
+        var stockTexto = p.unidad === 'LIBRA' ? (p.stock) + 'g' : p.stock;
         return '<div class="producto-card' + (p.stock <= 0 ? ' sin-stock' : '') + '" ' + (p.stock > 0 ? 'onclick="agregarAlCarrito(' + p.id + ')"' : '') + '>' +
             '<div class="producto-nombre">' + p.nombre + '</div>' +
             '<div class="producto-precio">' + precioTexto + unidadTexto + '</div>' +
@@ -107,24 +100,17 @@ function filtrarPorCategoria(cat) {
 function agregarAlCarrito(id) {
     var p = productos.find(function(x) { return x.id === id; });
     if (!p || p.stock <= 0) return;
-
     var cantidad = 1;
     var precioUnitario = p.precio;
-
     if (p.unidad === 'LIBRA') {
-        var gramos = prompt('¿Cuántos gramos? (500g = 1 libra = $' + p.precio.toLocaleString() + ')', '500');
+        var gramos = prompt('¿Cuántos gramos? (500g = $' + p.precio.toLocaleString() + ')', '500');
         if (!gramos) return;
         gramos = parseInt(gramos);
         if (isNaN(gramos) || gramos <= 0) { alert('Cantidad inválida'); return; }
         cantidad = gramos;
         precioUnitario = Math.round((p.precio / 500) * gramos / 100) * 100;
     }
-
-    carrito.push({ 
-        id: p.id, nombre: p.nombre, precio: precioUnitario, cantidad: 1, 
-        gramos: p.unidad === 'LIBRA' ? cantidad : null, 
-        unidad: p.unidad || 'UNIDAD'
-    });
+    carrito.push({ id: p.id, nombre: p.nombre, precio: precioUnitario, cantidad: 1, gramos: p.unidad === 'LIBRA' ? cantidad : null, unidad: p.unidad || 'UNIDAD' });
     actualizarCarrito();
 }
 
@@ -134,7 +120,7 @@ function actualizarCarrito() {
     else {
         div.innerHTML = carrito.map(function(item, i) {
             var nombreMostrar = item.nombre + (item.gramos ? ' (' + item.gramos + 'g)' : '');
-            return '<div class="carrito-item"><div class="carrito-item-info"><div class="carrito-item-nombre">' + nombreMostrar + '</div><div class="carrito-item-precio">$' + item.precio.toLocaleString() + '</div></div><div class="carrito-item-cantidad"><button class="btn-cantidad" onclick="eliminarDelCarrito(' + i + ')">✕</button></div></div>';
+            return '<div class="carrito-item"><div class="carrito-item-info"><div class="carrito-item-nombre">' + nombreMostrar + '</div><div class="carrito-item-precio">$' + item.precio.toLocaleString() + '</div></div><button class="btn-cantidad" onclick="eliminarDelCarrito(' + i + ')">✕</button></div>';
         }).join('');
     }
     calcularTotales();
@@ -193,12 +179,7 @@ function calcularCambio() {
 function confirmarVenta() {
     if (!medioPagoSeleccionado) { alert('Selecciona medio de pago'); return; }
     var total = carrito.reduce(function(s, i) { return s + i.precio; }, 0);
-
-    if (medioPagoSeleccionado === 'EFECTIVO') {
-        var paga = parseInt(document.getElementById('pagaCon').value) || 0;
-        if (paga < total) { alert('Monto insuficiente'); return; }
-    }
-
+    if (medioPagoSeleccionado === 'EFECTIVO') { var paga = parseInt(document.getElementById('pagaCon').value) || 0; if (paga < total) { alert('Monto insuficiente'); return; } }
     var clienteFiaoData = null;
     if (medioPagoSeleccionado === 'CREDITO') {
         var cid = document.getElementById('clienteFiao').value;
@@ -210,42 +191,20 @@ function confirmarVenta() {
         if ((cli.saldo + total) > cli.cupoMaximo) { alert('Excede cupo máximo'); return; }
         clienteFiaoData = cli;
     }
-
-    carrito.forEach(function(item) {
-        var p = productos.find(function(x) { return x.id === item.id; });
-        if (p) { if (item.gramos) { p.stock -= item.gramos; } else { p.stock -= item.cantidad; } }
-    });
+    carrito.forEach(function(item) { var p = productos.find(function(x) { return x.id === item.id; }); if (p) { if (item.gramos) { p.stock -= item.gramos; } else { p.stock -= item.cantidad; } } });
     localStorage.setItem(CONFIG.STORAGE_KEYS.PRODUCTOS, JSON.stringify(productos));
-
     if (medioPagoSeleccionado === 'CREDITO' && clienteFiaoData) {
         var clientes = JSON.parse(localStorage.getItem('tienda_clientes_fiao') || '[]');
         var idx = clientes.findIndex(function(c) { return c.id == clienteFiaoData.id; });
         if (idx !== -1) { clientes[idx].saldo += total; clientes[idx].totalPrestado += total; }
         localStorage.setItem('tienda_clientes_fiao', JSON.stringify(clientes));
     }
-
-    var venta = {
-        id: Date.now(), fecha: new Date().toISOString(),
-        items: JSON.parse(JSON.stringify(carrito)), total: total,
-        medioPago: medioPagoSeleccionado,
-        clienteFiao: clienteFiaoData ? { id: clienteFiaoData.id, nombre: clienteFiaoData.nombre } : null
-    };
-
+    var venta = { id: Date.now(), fecha: new Date().toISOString(), items: JSON.parse(JSON.stringify(carrito)), total: total, medioPago: medioPagoSeleccionado, clienteFiao: clienteFiaoData ? { id: clienteFiaoData.id, nombre: clienteFiaoData.nombre } : null };
     var ventasPendientes = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.VENTAS_PENDIENTES) || '[]');
     ventasPendientes.push(venta);
     localStorage.setItem(CONFIG.STORAGE_KEYS.VENTAS_PENDIENTES, JSON.stringify(ventasPendientes));
-
-    // SYNC: Subir venta y productos actualizados
-    if (typeof Sync !== 'undefined') {
-        Sync.sincronizarVenta(venta);
-        productos.forEach(function(p) {
-            Sync.sincronizarProducto({ id: p.id, nombre: p.nombre, stock: p.stock, precio: p.precio });
-        });
-    }
-
-    var cambio = 0;
-    if (medioPagoSeleccionado === 'EFECTIVO') cambio = (parseInt(document.getElementById('pagaCon').value) || 0) - total;
-
+    if (typeof Sync !== 'undefined') { Sync.sincronizarVenta(venta); productos.forEach(function(p) { Sync.sincronizarProducto({ id: p.id, nombre: p.nombre, stock: p.stock, precio: p.precio }); }); }
+    var cambio = 0; if (medioPagoSeleccionado === 'EFECTIVO') cambio = (parseInt(document.getElementById('pagaCon').value) || 0) - total;
     mostrarTicket(venta, cambio);
     carrito = []; actualizarCarrito(); cancelarCobro(); cargarProductos();
 }
@@ -253,36 +212,13 @@ function confirmarVenta() {
 function cancelarCobro() { document.getElementById('modalCobro').style.display = 'none'; medioPagoSeleccionado = null; }
 
 function mostrarTicket(venta, cambio) {
-    var itemsHtml = venta.items.map(function(i) {
-        var nombre = i.nombre + (i.gramos ? ' (' + i.gramos + 'g)' : '');
-        return '<tr><td>' + nombre + '</td><td style="text-align:right;">$' + i.precio.toLocaleString() + '</td></tr>';
-    }).join('');
-    var html = '<div class="ticket-overlay" id="ticketOverlay" onclick="cerrarTicket()"><div class="ticket" onclick="event.stopPropagation()"><div class="ticket-header"><h2>🏪 Tienda Barrio</h2><p>' + new Date().toLocaleString('es-CO') + '</p></div><div class="ticket-body"><table>' + itemsHtml + '</table></div><div class="ticket-footer"><h1>TOTAL: $' + venta.total.toLocaleString() + '</h1>' + (cambio > 0 ? '<p>Cambio: $' + cambio.toLocaleString() + '</p>' : '') + '<p style="color:#666;">¡Gracias por tu compra!</p></div><div class="ticket-actions"><button onclick="imprimirTicket()">🖨️ Imprimir</button><button onclick="cerrarTicket()">✖ Cerrar</button></div></div></div>';
-    document.body.insertAdjacentHTML('beforeend', html);
-    reproducirSonido();
+    var itemsHtml = venta.items.map(function(i) { var n = i.nombre + (i.gramos ? ' (' + i.gramos + 'g)' : ''); return '<tr><td>' + n + '</td><td style="text-align:right;">$' + i.precio.toLocaleString() + '</td></tr>'; }).join('');
+    var html = '<div class="ticket-overlay" id="ticketOverlay" onclick="cerrarTicket()"><div class="ticket" onclick="event.stopPropagation()"><div class="ticket-header"><h2>🏪 Tienda Barrio</h2><p>' + new Date().toLocaleString('es-CO') + '</p></div><div class="ticket-body"><table>' + itemsHtml + '</table></div><div class="ticket-footer"><h1>TOTAL: $' + venta.total.toLocaleString() + '</h1>' + (cambio > 0 ? '<p>Cambio: $' + cambio.toLocaleString() + '</p>' : '') + '<p>¡Gracias por tu compra!</p></div><div class="ticket-actions"><button onclick="imprimirTicket()">🖨️</button><button onclick="cerrarTicket()">✖</button></div></div></div>';
+    document.body.insertAdjacentHTML('beforeend', html); reproducirSonido();
 }
 
 function cerrarTicket() { var t = document.getElementById('ticketOverlay'); if (t) t.remove(); }
-function imprimirTicket() {
-    var ticket = document.querySelector('.ticket').cloneNode(true);
-    var actions = ticket.querySelector('.ticket-actions'); if (actions) actions.remove();
-    var win = window.open('', '', 'width=300,height=400');
-    win.document.write('<html><head><style>body{font-family:monospace;text-align:center;}table{width:100%;}td{padding:5px;}</style></head><body>');
-    win.document.write(ticket.innerHTML); win.document.write('</body></html>'); win.print(); win.close();
-}
-
-function reproducirSonido() {
-    try {
-        var ctx = new (window.AudioContext || window.webkitAudioContext)();
-        var o = ctx.createOscillator(), g = ctx.createGain();
-        o.connect(g); g.connect(ctx.destination); o.frequency.value = 800; g.gain.value = 0.1;
-        o.start(); o.stop(ctx.currentTime + 0.15);
-        setTimeout(function() {
-            var o2 = ctx.createOscillator(), g2 = ctx.createGain();
-            o2.connect(g2); g2.connect(ctx.destination); o2.frequency.value = 1200; g2.gain.value = 0.1;
-            o2.start(); o2.stop(ctx.currentTime + 0.2);
-        }, 150);
-    } catch(e) {}
-}
+function imprimirTicket() { var t = document.querySelector('.ticket').cloneNode(true); var a = t.querySelector('.ticket-actions'); if (a) a.remove(); var w = window.open('', '', 'width=300,height=400'); w.document.write('<html><body style="font-family:monospace;text-align:center;">' + t.innerHTML + '</body></html>'); w.print(); w.close(); }
+function reproducirSonido() { try { var ctx = new (window.AudioContext || window.webkitAudioContext)(); var o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value = 800; g.gain.value = 0.1; o.start(); o.stop(ctx.currentTime + 0.15); } catch(e) {} }
 
 function cerrarSesion() { if (confirm('¿Cerrar sesión?')) { localStorage.clear(); window.location.href = '../index.html'; } }
