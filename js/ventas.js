@@ -180,6 +180,7 @@ function confirmarVenta() {
     if (!medioPagoSeleccionado) { alert('Selecciona medio de pago'); return; }
     var total = carrito.reduce(function(s, i) { return s + i.precio; }, 0);
     if (medioPagoSeleccionado === 'EFECTIVO') { var paga = parseInt(document.getElementById('pagaCon').value) || 0; if (paga < total) { alert('Monto insuficiente'); return; } }
+    
     var clienteFiaoData = null;
     if (medioPagoSeleccionado === 'CREDITO') {
         var cid = document.getElementById('clienteFiao').value;
@@ -191,24 +192,40 @@ function confirmarVenta() {
         if ((cli.saldo + total) > cli.cupoMaximo) { alert('Excede cupo máximo'); return; }
         clienteFiaoData = cli;
     }
+    
     carrito.forEach(function(item) { var p = productos.find(function(x) { return x.id === item.id; }); if (p) { if (item.gramos) { p.stock -= item.gramos; } else { p.stock -= item.cantidad; } } });
     localStorage.setItem(CONFIG.STORAGE_KEYS.PRODUCTOS, JSON.stringify(productos));
+    
     if (medioPagoSeleccionado === 'CREDITO' && clienteFiaoData) {
         var clientes = JSON.parse(localStorage.getItem('tienda_clientes_fiao') || '[]');
         var idx = clientes.findIndex(function(c) { return c.id == clienteFiaoData.id; });
-        if (idx !== -1) { clientes[idx].saldo += total; clientes[idx].totalPrestado += total; }
+        if (idx !== -1) { 
+            clientes[idx].saldo += total; 
+            clientes[idx].totalPrestado += total; 
+        }
         localStorage.setItem('tienda_clientes_fiao', JSON.stringify(clientes));
+        
+        // SYNC CLIENTE
+        if (typeof Sync !== 'undefined' && idx !== -1) {
+            Sync.sincronizarCliente({
+                id: clientes[idx].id, nombre: clientes[idx].nombre, apodo: clientes[idx].apodo || '',
+                telefono: clientes[idx].telefono || '', cupoMaximo: clientes[idx].cupoMaximo,
+                saldo: clientes[idx].saldo, totalPrestado: clientes[idx].totalPrestado,
+                totalAbonado: clientes[idx].totalAbonado || 0, estado: clientes[idx].estado
+            });
+        }
     }
+    
     var venta = { id: Date.now(), fecha: new Date().toISOString(), items: JSON.parse(JSON.stringify(carrito)), total: total, medioPago: medioPagoSeleccionado, clienteFiao: clienteFiaoData ? { id: clienteFiaoData.id, nombre: clienteFiaoData.nombre } : null };
     var ventasPendientes = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.VENTAS_PENDIENTES) || '[]');
     ventasPendientes.push(venta);
     localStorage.setItem(CONFIG.STORAGE_KEYS.VENTAS_PENDIENTES, JSON.stringify(ventasPendientes));
     if (typeof Sync !== 'undefined') { Sync.sincronizarVenta(venta); productos.forEach(function(p) { Sync.sincronizarProducto({ id: p.id, nombre: p.nombre, stock: p.stock, precio: p.precio }); }); }
+    
     var cambio = 0; if (medioPagoSeleccionado === 'EFECTIVO') cambio = (parseInt(document.getElementById('pagaCon').value) || 0) - total;
     mostrarTicket(venta, cambio);
     carrito = []; actualizarCarrito(); cancelarCobro(); cargarProductos();
 }
-
 function cancelarCobro() { document.getElementById('modalCobro').style.display = 'none'; medioPagoSeleccionado = null; }
 
 function mostrarTicket(venta, cambio) {
