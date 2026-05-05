@@ -61,7 +61,16 @@ function guardarProducto() {
     var p=parseInt(document.getElementById('precioVenta').value);
     if(!n||!p){ alert('Nombre y precio obligatorios'); return; }
     var datos={ nombre:n, categoria:document.getElementById('categoriaProducto').value, unidad:document.getElementById('unidadProducto').value, precio:p, stock:parseFloat(document.getElementById('cantidadInicial').value)||0, stockMinimo:5 };
-    if(productoEditando){ var idx=productos.findIndex(function(x){ return x.id===productoEditando; }); if(idx!==-1){ productos[idx].nombre=datos.nombre; productos[idx].categoria=datos.categoria; productos[idx].unidad=datos.unidad; productos[idx].precio=datos.precio; } }
+    if(productoEditando){ 
+        var idx=productos.findIndex(function(x){ return x.id===productoEditando; }); 
+        if(idx!==-1){ 
+            productos[idx].nombre=datos.nombre; 
+            productos[idx].categoria=datos.categoria; 
+            productos[idx].unidad=datos.unidad; 
+            productos[idx].precio=datos.precio; 
+            productos[idx].stock=datos.stock; 
+        } 
+    }
     else { datos.id=Date.now(); productos.push(datos); }
     guardarProductos(productos);
     cerrarModalProducto(); cargarProductos();
@@ -72,6 +81,9 @@ function eliminarTodos() {
     if (!confirm('⚠️ ¿Eliminar TODOS los productos?')) return;
     if (!confirm('¿Estás completamente seguro?')) return;
     localStorage.removeItem(CONFIG.STORAGE_KEYS.PRODUCTOS);
+    if (typeof Sync !== 'undefined') {
+        Sync.subir('inventario', { id: 0, nombre: 'reset', stock: 0, precio: 0, unidad: 'RESET' });
+    }
     cargarProductos();
     alert('✅ Todos los productos eliminados');
 }
