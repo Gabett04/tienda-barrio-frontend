@@ -36,7 +36,7 @@ var Sync = {
                     } else { 
                         existe.stock = p.stock_actual; 
                         existe.precio = p.precio_venta; 
-                        existe.unidad = p.unidad || existe.unidad;
+                        if (p.unidad) existe.unidad = p.unidad;
                     }
                 });
                 localStorage.setItem(CONFIG.STORAGE_KEYS.PRODUCTOS, JSON.stringify(local));

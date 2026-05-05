@@ -6,24 +6,6 @@ let carrito = [];
 let productos = [];
 let medioPagoSeleccionado = null;
 
-const productosEjemplo = [
-    { id: 1, nombre: 'Arroz Libra', precio: 1800, stock: 50, categoria: 'Abarrotes', unidad: 'UNIDAD' },
-    { id: 2, nombre: 'Huevos Unidad', precio: 600, stock: 100, categoria: 'Lácteos y Huevos', unidad: 'UNIDAD' },
-    { id: 3, nombre: 'Leche Bolsa', precio: 4500, stock: 30, categoria: 'Lácteos y Huevos', unidad: 'UNIDAD' },
-    { id: 4, nombre: 'Pan Aliñado', precio: 400, stock: 80, categoria: 'Pan y Repostería', unidad: 'UNIDAD' },
-    { id: 5, nombre: 'Gaseosa Personal', precio: 2500, stock: 60, categoria: 'Bebidas', unidad: 'UNIDAD' },
-    { id: 6, nombre: 'Chicle', precio: 200, stock: 200, categoria: 'Golosinas y Paquetes', unidad: 'UNIDAD' },
-    { id: 7, nombre: 'Jabón Rey', precio: 2600, stock: 40, categoria: 'Aseo Hogar', unidad: 'UNIDAD' },
-    { id: 8, nombre: 'Papel Higiénico', precio: 1500, stock: 70, categoria: 'Aseo Personal', unidad: 'UNIDAD' },
-    { id: 9, nombre: 'Café Sello Rojo 250g', precio: 9500, stock: 25, categoria: 'Abarrotes', unidad: 'UNIDAD' },
-    { id: 10, nombre: 'Arroz Kilo', precio: 3500, stock: 35, categoria: 'Abarrotes', unidad: 'UNIDAD' },
-    { id: 11, nombre: 'Mogolla', precio: 500, stock: 90, categoria: 'Pan y Repostería', unidad: 'UNIDAD' },
-    { id: 12, nombre: 'Detergente Sobre', precio: 1000, stock: 55, categoria: 'Aseo Hogar', unidad: 'UNIDAD' },
-    { id: 13, nombre: 'Queso Libra', precio: 8000, stock: 20000, categoria: 'Lácteos y Huevos', unidad: 'LIBRA' },
-    { id: 14, nombre: 'Carne Libra', precio: 12000, stock: 15000, categoria: 'Abarrotes', unidad: 'LIBRA' },
-    { id: 15, nombre: 'Azúcar Libra', precio: 1200, stock: 80000, categoria: 'Abarrotes', unidad: 'LIBRA' }
-];
-
 document.addEventListener('DOMContentLoaded', function() {
     verificarSesion(); cargarDatosTienda(); cargarProductos();
     configurarBusqueda(); configurarCalculoCambio();

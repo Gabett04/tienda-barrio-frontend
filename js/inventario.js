@@ -77,18 +77,25 @@ function guardarProducto() {
     if(typeof Sync!=='undefined') Sync.sincronizarProducto({ id:datos.id, nombre:datos.nombre, stock:datos.stock, precio:datos.precio, unidad:datos.unidad });
 }
 
+function agregarStock(id) { 
+    var c=prompt('Cantidad:'); if(!c) return; 
+    c=parseFloat(c); if(isNaN(c)||c<=0) return; 
+    var p=getProductos(); 
+    var idx=p.findIndex(function(x){ return x.id===id; }); 
+    if(idx!==-1) p[idx].stock+=c; 
+    guardarProductos(p); 
+    cargarProductos();
+    if(typeof Sync!=='undefined') Sync.sincronizarProducto({ id: p[idx].id, nombre: p[idx].nombre, stock: p[idx].stock, precio: p[idx].precio, unidad: p[idx].unidad });
+}
+
 function eliminarTodos() {
     if (!confirm('⚠️ ¿Eliminar TODOS los productos?')) return;
     if (!confirm('¿Estás completamente seguro?')) return;
     localStorage.removeItem(CONFIG.STORAGE_KEYS.PRODUCTOS);
-    if (typeof Sync !== 'undefined') {
-        Sync.subir('inventario', { id: 0, nombre: 'reset', stock: 0, precio: 0, unidad: 'RESET' });
-    }
     cargarProductos();
     alert('✅ Todos los productos eliminados');
 }
 
-function agregarStock(id) { var c=prompt('Cantidad:'); if(!c) return; c=parseFloat(c); if(isNaN(c)||c<=0) return; var p=getProductos(); var idx=p.findIndex(function(x){ return x.id===id; }); if(idx!==-1) p[idx].stock+=c; guardarProductos(p); cargarProductos(); }
 function eliminarProducto(id) { if(!confirm('¿Eliminar?')) return; guardarProductos(getProductos().filter(function(x){ return x.id!==id; })); cargarProductos(); }
 function cerrarModalProducto() { document.getElementById('modalProducto').style.display='none'; productoEditando=null; }
 function cerrarSesion() { if(confirm('¿Cerrar sesión?')){localStorage.clear();window.location.href='../index.html';} }
